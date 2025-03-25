@@ -1,0 +1,130 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp129
+{
+    /// <summary>
+    /// Класс для работы с картой и объектами на ней
+    /// </summary>
+    public class Map
+    {
+        private readonly MapObjectsMovement objectsMovement = new MapObjectsMovement(); // Инициализируем сразу
+        private readonly Random rand = new Random(); // Инициализируем сразу
+
+        private int enemyCount; //Переменная для отслеживания количества врагов
+        private int enemyCount2; //Переменная для отслеживания количества врагов
+        private int enemyCount3; //Переменная для отслеживания количества врагов
+
+        private int totalPoints = 0; //Переменная для баллов (исправлено =+ на =)
+        public int TotalPoints // Получение значения количества баллов
+        {
+            get { return totalPoints; }
+        }
+
+        MapObject[,] map = new MapObject[25 , 25]; // создание поля с размером 25 на 25
+
+        /// <summary>
+        /// Метод генерации карты
+        /// </summary>
+        public void Map_generation ( )
+        {
+            enemyCount = 0;
+            enemyCount2 = 0;
+            enemyCount3 = 0;
+
+            for ( int i = 0 ; i < map .GetLength(0) ; i++ )
+            {
+                for ( int j = 0 ; j < map .GetLength(1) ; j++ )
+                {
+                    int A = rand .Next(100);
+
+                    map[i , j] = new Field();
+
+                    if ( A > 1 && A < 6 )
+                    {
+                        map[i , j] = new Wall();
+                    }
+
+                    if ( A > 5 && A < 10 )
+                    {
+                        map[i , j] = new Tree();
+                    }
+
+                    if ( i == map .GetLength(0) / 2 && j == map .GetLength(1) / 2 )
+                    {
+                        map[i , j] = new Hero(i , j);
+                    }
+
+                    if ( A < 1 )
+                    {
+                        map[i , j] = new Standart_Enemy(i , j);
+                        enemyCount++; // Увеличение счетчика врагов
+                    }
+
+                    if ( A >= 1 && A < 2 )
+                    {
+                        map[i , j] = new Jump_Enemy(i , j);
+                        enemyCount2++; // Увеличение счетчика врагов
+                    }
+
+                    if ( A >= 2 && A < 3 )
+                    {
+                        map[i , j] = new Diagonal_Enemy(i , j);
+                        enemyCount3++; // Увеличение счетчика врагов
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Выводит карту на экран
+        /// </summary>
+        public void Drawing_the_map()
+        {
+            for (int i = 0; i < map.GetLength(0); i++)
+            {
+                for (int j = 0; j < map.GetLength(1); j++)
+                {
+                    Console.Write(map[i, j].Rendering_on_the_map() + " ");
+                    Console.ResetColor();
+                }
+                Console.WriteLine();
+            }
+        }
+        /// <summary>
+        /// Обновляет положение объектов на карте
+        /// </summary>
+        public void MovePersons()
+        {
+            objectsMovement.MovePersons(map);
+        }
+
+
+        /// <summary>
+        /// Перемещает объекты на карте в соответствии с нажатой клавишей на клавиатуре
+        /// </summary>
+        /// <param name="key"></param>
+        public void MovePersons (ConsoleKey key)
+        {
+            objectsMovement .MovePersons(
+                key , map , ref enemyCount , ref enemyCount2 , ref enemyCount3 , ref totalPoints); // Убрали enemyMenu
+
+            if ( enemyCount == 0 && enemyCount2 == 0 && enemyCount3 == 0 )
+            {
+                Console .WriteLine($"Все противники побеждены! Заработано {totalPoints}! Переход на следующий уровень...");
+                File .WriteResultsToFile(totalPoints);
+                File .ReadMaxPointsFromFile();
+                Console .ReadLine();
+                Map_generation();
+            }
+
+        }
+
+    }
+}
+
