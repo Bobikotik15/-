@@ -1,0 +1,239 @@
+using System;
+using System .Collections .Generic;
+using System .Linq;
+using System .Text;
+using System .Threading .Tasks;
+
+namespace ConsoleApp129
+{
+    /// <summary>
+    /// Класс перемещений объектов на карте
+    /// </summary>
+    internal class MapObjectsMovement
+    {
+        private readonly Random rand = new Random();
+
+        /// <summary>
+        /// Обновляет положение объектов на карте
+        /// </summary>
+        public void MovePersons (MapObject[,] map)
+        {
+            MapObject[,] newMap = new MapObject[map .GetLength(0) , map .GetLength(1)];
+
+            Array .Copy(map , newMap , map .Length);
+
+            for ( int i = 0 ; i < map .GetLength(0) ; i++ )
+            {
+                for ( int j = 0 ; j < map .GetLength(1) ; j++ )
+                {
+                    if ( map[i , j] is Standart_Enemy )
+                    {
+                        int direction = rand .Next(4);
+
+                        int newX = i, newY = j;
+
+                        switch ( direction )
+                        {
+                            case 0:
+                                newX = (i - 1 + map .GetLength(0)) % map .GetLength(0);
+                                break;
+                            case 1:
+                                newX = (i + 1) % map .GetLength(0);
+                                break;
+                            case 2:
+                                newY = (j - 1 + map .GetLength(1)) % map .GetLength(1);
+                                break;
+                            case 3:
+                                newY = (j + 1) % map .GetLength(1);
+                                break;
+                        }
+
+                        if ( newMap[newX , newY] is Field )
+                        {
+                            newMap[newX , newY] = map[i , j];
+                            newMap[i , j] = new Field();
+                        }
+                    }
+
+                    if ( map[i , j] is Jump_Enemy )
+                    {
+                        int direction = rand .Next(8);
+
+                        int newX = i, newY = j;
+
+                        switch ( direction )
+                        {
+                            case 0:
+                                newX = (i - 1 + map .GetLength(0)) % map .GetLength(0);
+                                break;
+                            case 1:
+                                newX = (i + 1) % map .GetLength(0);
+                                break;
+                            case 2:
+                                newY = (j - 1 + map .GetLength(1)) % map .GetLength(1);
+                                break;
+                            case 3:
+                                newY = (j + 1) % map .GetLength(0);
+                                break;
+                            case 4:
+                                newY = (j + 0) % map .GetLength(0);
+                                break;
+                            case 5:
+                                newX = (j + 5) % map .GetLength(0);
+                                break;
+                            case 6:
+                                newY = (j + 5) % map .GetLength(0);
+                                break;
+                        }
+
+                        if ( newMap[newX , newY] is Field )
+                        {
+                            newMap[newX , newY] = map[i , j];
+                            newMap[i , j] = new Field();
+                        }
+                    }
+                    if ( map[i , j] is Diagonal_Enemy )
+                    {
+                        int direction = rand .Next(4);
+
+                        int newX = i, newY = j;
+
+                        switch ( direction )
+                        {
+                            case 0: // Движение вверх-влево
+                                newX = (i - 1 + map .GetLength(0)) % map .GetLength(0);
+                                newY = (i - 1 + map .GetLength(1)) % map .GetLength(1);
+                                break;
+                            case 1: // Движение вверх-вправо
+                                newX = (i - 1 + map .GetLength(0)) % map .GetLength(0);
+                                newX = (i + 1) % map .GetLength(1);
+                                break;
+                            case 2: // Движение вниз-влево
+                                newX = (i + 1) % map .GetLength(0);
+                                newY = (j - 1 + map .GetLength(1)) % map .GetLength(1);
+                                break;
+                            case 3: // Движение вниз-вправо
+                                newX = (j + 1) % map .GetLength(0);
+                                newY = (j + 1) % map .GetLength(1);
+                                break;
+                        }
+
+                        if ( newMap[newX , newY] is Field )
+                        {
+                            newMap[newX , newY] = map[i , j];
+                            newMap[i , j] = new Field();
+                        }
+                    }
+                }
+            }
+            Array .Copy(newMap , map , map .Length);
+        }
+
+        /// <summary>
+        /// Перемещает объекты на карте в соответствии с нажатой клавишей на клавиатуре
+        /// </summary>
+        /// <param name="key"></param>
+        public void MovePersons (ConsoleKey key , MapObject[,] map , ref int enemyCount , ref int enemyCount2 , ref int enemyCount3 , ref int totalPoints)
+        {
+            MapObject[,] newMap = new MapObject[map .GetLength(0) , map .GetLength(1)];
+            Array .Copy(map , newMap , map .Length);
+            for ( int i = 0 ; i < map .GetLength(0) ; i++ )
+            {
+                for ( int j = 0 ; j < map .GetLength(1) ; j++ )
+                {
+                    if ( key != ConsoleKey .Escape ) // при нажатии на Escape выход в главное меню без затрагивания обработкой исключений
+                    {
+                        if ( map[i , j] is Hero )
+                        {
+                            int newX = i, newY = j;
+
+                            switch ( key )
+                            {
+                                case ConsoleKey .UpArrow:
+                                    newX = (i - 1 + map .GetLength(0)) % map .GetLength(0);
+                                    break;
+                                case ConsoleKey .DownArrow:
+                                    newX = (i + 1) % map .GetLength(0);
+                                    break;
+                                case ConsoleKey .LeftArrow:
+                                    newY = (j - 1 + map .GetLength(1)) % map .GetLength(1);
+                                    break;
+                                case ConsoleKey .RightArrow:
+                                    newY = (j + 1) % map .GetLength(1);
+                                    break;
+                                default:
+                                    if ( key == ConsoleKey .F5 ) // при нажатии на F5 выход в главное меню без затрагивания обработкой исключений
+                                    {
+                                        Console .Clear();
+                                        Console .WriteLine("Сохранение в файл");
+                                        Console .ReadLine();
+                                    }
+                                    else if ( key == ConsoleKey .F6 ) // при нажатии на F6 выход в главное меню без затрагивания обработкой исключений
+                                    {
+                                        File .ReadMaxPointsFromFile();
+                                    }
+                                    else
+                                    {
+                                        try
+                                        {
+                                            throw new ButtonException("");
+                                        }
+                                        catch ( ButtonException ex )
+                                        {
+                                            Console .Clear();
+                                            Console .WriteLine(ex .Message); // Вывод сообщения об ошибке в исключении  
+                                            Console .ReadLine();
+                                        }
+                                    }
+                                    break;
+                            }
+                            if ( newMap[newX , newY] is Field ) // проверка типа объекта
+                            {
+                                newMap[newX , newY] = map[i , j];
+                                newMap[i , j] = new Field();
+                            }
+                            else if ( newMap[newX , newY] is Standart_Enemy || newMap[newX , newY] is Jump_Enemy || newMap[newX , newY] is Diagonal_Enemy )
+                            {
+                                // Создаем экземпляры IMainMenu и EnemyMenu
+                                IMainMenu mainMenu = new MainMenu();
+                                EnemyMenu enemyMenu = new EnemyMenu(mainMenu);
+
+                                // Вызываем метод ShowEnemyInteractionMenu() через экземпляр
+                                enemyMenu .ShowEnemyInteractionMenu();
+
+                                if ( enemyMenu .EnemyMenuChoice == 1 )
+                                {
+                                    newMap[newX , newY] = new Field(); // После атаки вражеский объект исчезает с поля
+
+                                    if ( newMap[newX , newY] is Standart_Enemy )
+                                    {
+                                        enemyCount--; // Уменьшение счетчика количества врагов
+                                        totalPoints += 100;
+                                    }
+                                    else if ( newMap[newX , newY] is Jump_Enemy )
+                                    {
+                                        enemyCount2--; // Уменьшение счетчика количества врагов
+                                        totalPoints += 200;
+                                    }
+                                    else if ( newMap[newX , newY] is Diagonal_Enemy )
+                                    {
+                                        enemyCount3--; // Уменьшение счетчика количества врагов
+                                        totalPoints += 300;
+                                    }
+                                }
+                                else if ( enemyMenu .EnemyMenuChoice == 0 )
+                                {
+                                    // Проверка выбора побега, чтобы враг не исчезал в последовательности атака - сбежать
+                                }
+                            }
+                        }
+                    }
+                }
+                Array .Copy(newMap , map , map .Length);
+            }
+        }
+    }
+}
+
+
+
