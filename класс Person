@@ -1,0 +1,88 @@
+using ConsoleApp129;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp129
+{
+    /// <summary>
+    /// Класс персонажа с координатами X и Y наследуемый от MapObject
+    /// </summary>
+    public class Person : MapObject, IMovable
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
+
+        public Person (int X , int Y)
+        {
+            this .X = X;
+            this .Y = Y;
+        }
+
+        public override char Rendering_on_the_map ( )
+        {
+            return '☺';
+        }
+
+        public virtual void Move (int newX , int newY)
+        {
+            X = newX;
+            Y = newY;
+        }
+    }
+    /// <summary>
+    /// Представляет объект героя на карте
+    /// </summary>
+    public class Hero : Person, IMovable
+    {
+        public Hero (int X , int Y) : base(X , Y) { }
+        public override char Rendering_on_the_map ( )
+        {
+            Console .ForegroundColor = ConsoleColor .Yellow;
+            return '☻';
+        }
+    }
+
+    /// <summary>
+    /// Представляет объект врага на карте
+    /// </summary>
+    public  class Standart_Enemy : Person, IMovable
+    {
+        public Standart_Enemy (int X , int Y) : base(X , Y) { }
+        public override char Rendering_on_the_map ( )
+        {
+            Console .ForegroundColor = ConsoleColor .Red;
+            return base .Rendering_on_the_map();
+        }
+    }
+    /// <summary>
+    /// Представляет объект врага второго типа на карте
+    /// </summary>
+
+    public  class Jump_Enemy : Person, IMovable
+    {
+        public Jump_Enemy (int X , int Y) : base(X , Y) { }
+        public override char Rendering_on_the_map ( )
+        {
+            Console .ForegroundColor = ConsoleColor .Gray;
+            return base .Rendering_on_the_map();
+        }
+    }
+    /// <summary>
+    /// Представляет объект врага третьего типа на карте
+    /// </summary>
+    public class Diagonal_Enemy : Person, IMovable
+    {
+        public Diagonal_Enemy (int X , int Y) : base(X , Y) { }
+        public override char Rendering_on_the_map ( )
+        {
+            Console .ForegroundColor = ConsoleColor .DarkMagenta;
+            return base .Rendering_on_the_map();
+        }
+    }
+}
+
+
+
