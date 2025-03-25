@@ -1,0 +1,150 @@
+using ConsoleApp129;
+using System .Numerics;
+using System;
+namespace ConsoleApp129 .Tests
+{
+    [TestClass]
+    public class PersonTests
+    {
+        private Person _person; // Объект Person для тестов
+
+        [TestInitialize]
+        public void TestInitialize ( )
+        {
+            // Выполняется перед каждым тестовым методом, инициализирует _person
+            _person = new Person(5 , 10);
+        }
+
+        [TestMethod]
+        public void Move_UpdatesCoordinatesCorrectly ( )
+        {
+            // Проверяет, что метод Move правильно обновляет координаты X и Y
+            int newX = 15;
+            int newY = 20;
+
+            _person .Move(newX , newY); // Вызываем метод Move
+
+            Assert .AreEqual(newX , _person .X); // Проверяем, что X обновился
+            Assert .AreEqual(newY , _person .Y); // Проверяем, что Y обновился
+        }
+    }
+
+    [TestClass]
+    public class EnemyTests
+    {
+        [TestClass]
+        public class Standart_EnemyTests
+        {
+            [TestMethod]
+            public void Constructor_SetsCoordinatesCorrectly ( )
+            {
+                // Проверяет, что конструктор устанавливает координаты X и Y правильно
+                // Arrange
+                int initialX = 10;
+                int initialY = 20;
+
+                // Act
+                var enemy = new Standart_Enemy(initialX , initialY);
+
+                // Assert
+                Assert .AreEqual(initialX , enemy .X); // Проверяем, что X установлен правильно
+                Assert .AreEqual(initialY , enemy .Y); // Проверяем, что Y установлен правильно
+            }
+
+            [TestMethod]
+            public void Rendering_ReturnsCorrectSymbol ( )
+            {
+                // Проверяет, что метод Rendering_on_the_map возвращает правильный символ
+                var enemy = new Standart_Enemy(0 , 0);
+                char rendering = enemy .Rendering_on_the_map();
+
+                Assert .AreEqual('☺' , rendering); // Проверяем, что возвращается правильный символ
+            }
+        }
+
+        [TestClass]
+        public class Jump_EnemyTests
+        {
+            [TestMethod]
+            public void Constructor_SetsCoordinatesCorrectly ( )
+            {
+                // Проверяет, что конструктор устанавливает координаты X и Y правильно
+                // Arrange
+                int initialX = 10;
+                int initialY = 20;
+
+                // Act
+                var enemy = new Jump_Enemy(initialX , initialY);
+
+                // Assert
+                Assert .AreEqual(initialX , enemy .X); // Проверяем, что X установлен правильно
+                Assert .AreEqual(initialY , enemy .Y); // Проверяем, что Y установлен правильно
+            }
+
+            [TestMethod]
+            public void Rendering_ReturnsCorrectSymbol ( )
+            {
+                // Проверяет, что метод Rendering_on_the_map возвращает правильный символ
+                // Arrange
+                var enemy = new Jump_Enemy(0 , 0);
+
+                // Act
+                char rendering = enemy .Rendering_on_the_map();
+
+                // Assert
+                Assert .AreEqual('☺' , rendering); // Предполагаем, что базовый класс возвращает '☺'
+            }
+        }
+
+        [TestClass]
+        public class Diagonal_EnemyTests
+        {
+            [TestMethod]
+            public void Constructor_SetsCoordinatesCorrectly ( )
+            {
+                // Проверяет, что конструктор устанавливает координаты X и Y правильно
+                // Arrange
+                int initialX = 10;
+                int initialY = 20;
+
+                // Act
+                var enemy = new Diagonal_Enemy(initialX , initialY);
+
+                // Assert
+                Assert .AreEqual(initialX , enemy .X); // Проверяем, что X установлен правильно
+                Assert .AreEqual(initialY , enemy .Y); // Проверяем, что Y установлен правильно
+            }
+
+            [TestMethod]
+            public void Rendering_ReturnsCorrectSymbol ( )
+            {
+                // Проверяет, что метод Rendering_on_the_map возвращает правильный символ
+                // Arrange
+                var enemy = new Diagonal_Enemy(0 , 0);
+
+                // Act
+                char rendering = enemy .Rendering_on_the_map();
+
+                // Assert
+                Assert .AreEqual('☺' , rendering); // Предполагаем, что базовый класс возвращает '☺'
+            }
+        }
+
+        [TestMethod]
+        public void Move_MovesDiagonally ( )
+        {
+            // Проверяет, что враг Diagonal_Enemy двигается по диагонали правильно
+            // Arrange
+            var enemy = new Diagonal_Enemy(0 , 0);
+            int moveX = 5;
+            int moveY = 5;
+
+            // Act
+            enemy .Move(moveX , moveY); // Предполагаем, что у тебя есть метод Move()
+
+            // Assert
+            Assert .AreEqual(moveX , enemy .X); // Проверяем, что X обновился
+            Assert .AreEqual(moveY , enemy .Y); // Проверяем, что Y обновился
+        }
+    }
+}
