@@ -1,0 +1,47 @@
+name: CI/CD Pipeline
+ 
+ on:
+   push:
+     branches: [ "main" ] # Запускается при push в ветку main
+   pull_request:
+     branches: [ "main" ] # Запускается при pull request в ветку main
+ 
+ jobs:
+   build-and-test:
+     runs-on: ubuntu-latest # Операционная система для выполнения
+ 
+     steps:
+     - name: Checkout code # Клонирование репозитория
+       uses: actions/checkout@v3
+ 
+     - name: Setup .NET # Установка .NET SDK
+       uses: actions/setup-dotnet@v3
+       with:
+         dotnet-version: '6.0.x' # Или другая версия, которую ты используешь
+ 
+     - name: Restore dependencies # Восстановление NuGet пакетов
+       run: dotnet restore
+ 
+     - name: Build # Сборка проекта
+       run: dotnet build --configuration Release --no-restore
+ 
+     - name: Test # Запуск тестов
+       run: dotnet test --no-build --configuration Release --logger trx --results-directory TestResults
+ 
+     - name: Publish Test Results # Публикация результатов тестов
+       uses: actions/upload-artifact@v3
+       with:
+         name: test-results
+         path: TestResults # Папка с результатами тестов
+ 
+     - name: Create the artifact staging directory # Создаем папку, где сложим артефакт для публикации
+       run: mkdir -p dist
+ 
+     - name: Publish the application # Публикация приложения (создание пакета развертывания)
+       run: dotnet publish -c Release -o dist
+ 
+     - name: Upload Artifact # Загрузка артефакта (пакета развертывания)
+       uses: actions/upload-artifact@v3
+       with:
+         name: published-app
+         path: dist # Папка, где лежит скомпилированное приложение
